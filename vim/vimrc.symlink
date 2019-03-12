@@ -82,6 +82,7 @@ Plug 'editorconfig/editorconfig-vim'
 
 " Git stuff
 Plug 'airblade/vim-gitgutter'
+Plug 'zivyangll/git-blame.vim'
 
 " UI Stuff
 Plug 'vim-airline/vim-airline'
@@ -127,9 +128,9 @@ nnoremap <leader>o o<esc>
 nnoremap <leader>O O<esc>
 
 " Save
-inoremap <C-s>     <C-O>:update<cr>
-nnoremap <C-s>     :update<cr>
-nnoremap <leader>s :update<cr>
+" inoremap <C-s>     <C-O>:update<cr>
+" nnoremap <C-s>     :update<cr>
+" nnoremap <leader>s :update<cr>
 nnoremap <leader>w :update<cr>
 
 " Movement in insert mode
@@ -141,6 +142,10 @@ inoremap <C-^> <C-o><C-^>
 
 " FZF
 nnoremap <C-p> :Files<cr>
+nnoremap <C-F> :Ag<cr>
+
+" Git blame
+nnoremap <Leader>s :<C-u>call gitblame#echo()<CR>
 
 
 " ============================================================================
@@ -173,6 +178,12 @@ let g:fzf_colors =
 
 command! -bang -nargs=? -complete=dir Files
   \ call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
+
+command! -bang -nargs=* Ag
+  \ call fzf#vim#ag(<q-args>,
+  \                 <bang>0 ? fzf#vim#with_preview('up:60%')
+  \                         : fzf#vim#with_preview('right:50%'),
+  \                 <bang>0)
 
 " nnoremap <silent> <Leader><Leader> :Files<CR>
 nnoremap <silent> <expr> <Leader><Leader> (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":Files\<cr>"
