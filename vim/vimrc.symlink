@@ -83,8 +83,10 @@ Plug 'editorconfig/editorconfig-vim'
 
 " Git stuff
 Plug 'jreybert/vimagit'
-Plug 'airblade/vim-gitgutter'
+" Plug 'airblade/vim-gitgutter'
+Plug 'mhinz/vim-signify'
 Plug 'zivyangll/git-blame.vim'
+Plug 'tpope/vim-fugitive'
 
 " UI Stuff
 Plug 'vim-airline/vim-airline'
@@ -107,6 +109,12 @@ map <silent> <C-n> :NERDTreeToggle<CR>
 " close NERDTree after a file is opened
 let g:NERDTreeQuitOnOpen=1
 
+" Speed up vim-signify a tad
+let g:signify_vcs_list = [ 'git' ]
+let g:signify_cursorhold_insert     = 1
+let g:signify_cursorhold_normal     = 1
+let g:signify_update_on_bufenter    = 0
+let g:signify_update_on_focusgained = 1
 
 
 """"""""""""""""""""""""""""""""""""""""""""
