@@ -81,6 +81,7 @@ Plug 'maxmellon/vim-jsx-pretty'
 Plug 'editorconfig/editorconfig-vim'
 
 " Git stuff
+Plug 'jreybert/vimagit'
 Plug 'airblade/vim-gitgutter'
 Plug 'zivyangll/git-blame.vim'
 
