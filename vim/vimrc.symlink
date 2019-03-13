@@ -65,6 +65,7 @@ set si
 call plug#begin('~/.config/nvim/plugged')
 
 Plug 'scrooloose/nerdtree'
+Plug 'scrooloose/nerdcommenter'
 
 " Autocompleting
 Plug '/usr/local/opt/fzf'
