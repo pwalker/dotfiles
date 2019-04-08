@@ -30,7 +30,7 @@ set listchars=tab:¦\ ,trail:⋅,extends:❯,precedes:❮ " eol:¬
 
 " Airline config
 let g:airline_theme='night_owl'
-
+let g:airline#extensions#ale#enabled = 1
 
 
 """""""""""""""""""""""""""""""""""""""""""""""
@@ -82,11 +82,8 @@ Plug 'maxmellon/vim-jsx-pretty'
 Plug 'editorconfig/editorconfig-vim'
 
 " Git stuff
-Plug 'jreybert/vimagit'
-" Plug 'airblade/vim-gitgutter'
-Plug 'mhinz/vim-signify'
-Plug 'zivyangll/git-blame.vim'
 Plug 'tpope/vim-fugitive'
+Plug 'mhinz/vim-signify'
 
 " UI Stuff
 Plug 'vim-airline/vim-airline'
@@ -105,6 +102,7 @@ call plug#end()
 " NERDTree
 let NERDTreeShowHidden=1
 map <silent> <C-n> :NERDTreeToggle<CR>
+map <silent> <C-N> :NERDTreeFind<CR>
 
 " close NERDTree after a file is opened
 let g:NERDTreeQuitOnOpen=1
@@ -133,16 +131,6 @@ inoremap <Down>  <NOP>
 inoremap <Left>  <NOP>
 inoremap <Right> <NOP>
 
-" Open new line below and above current line
-nnoremap <leader>o o<esc>
-nnoremap <leader>O O<esc>
-
-" Save
-" inoremap <C-s>     <C-O>:update<cr>
-" nnoremap <C-s>     :update<cr>
-" nnoremap <leader>s :update<cr>
-nnoremap <leader>w :update<cr>
-
 " Movement in insert mode
 inoremap <C-h> <C-o>h
 inoremap <C-l> <C-o>a
@@ -153,9 +141,6 @@ inoremap <C-^> <C-o><C-^>
 " FZF
 nnoremap <C-p> :Files<cr>
 nnoremap <C-F> :Ag<cr>
-
-" Git blame
-nnoremap <Leader>s :<C-u>call gitblame#echo()<CR>
 
 
 " ============================================================================
@@ -195,7 +180,7 @@ command! -bang -nargs=* Ag
   \                         : fzf#vim#with_preview('right:50%'),
   \                 <bang>0)
 
-" nnoremap <silent> <Leader><Leader> :Files<CR>
+nnoremap <silent> <Leader><Leader> :Files<CR>
 nnoremap <silent> <expr> <Leader><Leader> (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":Files\<cr>"
 nnoremap <silent> <Leader>C        :Colors<CR>
 nnoremap <silent> <Leader><Enter>  :Buffers<CR>
@@ -249,8 +234,8 @@ let g:ale_lint_on_text_changed = 'always'
 let g:ale_lint_delay = 1000
 
 " use nice symbols for errors and warnings
-let g:ale_sign_error = '✗\ '
-let g:ale_sign_warning = '⚠\ '
+" let g:ale_sign_error = 'x'
+" let g:ale_sign_warning = 'w\ '
 let g:ale_sign_column_always = 1
 
 " fixer configurations
