@@ -1,2 +1,2 @@
-export MYVIMRC="~/.dotfiles/vim/vimrc.symlink"
+export MYVIMRC="~/.dotfiles/nvim/vimrc.symlink"
 
