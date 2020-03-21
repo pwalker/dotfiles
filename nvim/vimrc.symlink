@@ -69,7 +69,7 @@ endif
 
 call plug#begin('~/.config/nvim/plugged')
 
-Plug 'scrooloose/nerdtree'
+" Plug 'scrooloose/nerdtree'
 Plug 'scrooloose/nerdcommenter'
 
 " Autocompleting
@@ -79,7 +79,7 @@ Plug 'junegunn/fzf.vim'
 " Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
 
 " Linting
-Plug 'w0rp/ale'
+Plug 'dense-analysis/ale'
 
 " Javascript
 Plug 'pangloss/vim-javascript'
@@ -101,6 +101,9 @@ Plug 'rust-lang/rust.vim'
 
 " Wiki stuff
 Plug 'vimwiki/vimwiki'
+" Plug 'michal-h21/vim-zettel'
+Plug '~/Code/vim-zettel'
+Plug 'alok/notational-fzf-vim'
 
 call plug#end()
 
@@ -113,9 +116,9 @@ call plug#end()
 " Open NERDTree automatically when vim starts up
 " autocmd vimenter * NERDTree
 " NERDTree
-let NERDTreeShowHidden=1
+" let NERDTreeShowHidden=1
 " map <silent> <C-n> :NERDTreeFind<CR>
-map <silent> <C-m> :NERDTreeToggle<CR>
+" map <silent> <C-m> :NERDTreeToggle<CR>
 
 " close NERDTree after a file is opened
 let g:NERDTreeQuitOnOpen=1
@@ -138,6 +141,13 @@ let g:ycm_key_invoke_completion = ycm_trigger_key
 " See http://vim.wikia.com/wiki/Improve_completion_popup_menu for more info.
 let g:ycm_key_list_select_completion = ['<TAB>', '<C-j>']
 inoremap <expr> ycm_trigger_key pumvisible() ? "<C-j>" : ycm_trigger_key;
+
+" VimWiki and Zettelkasten configs
+let g:vimwiki_list = [{'path': '~/Notes/zettels', 'syntax': 'markdown', 'ext': '.md'}]
+let g:vimwiki_global_ext = 0
+let g:nv_search_paths = ['~/Notes/zettels']
+let g:zettel_format = "%y%m%d%H%M-%title"
+let g:zettel_options = [{'link_format': '[[%link]]', 'link_stub': '[[%link]]'}]
 
 
 """"""""""""""""""""""""""""""""""""""""""""
@@ -170,6 +180,12 @@ nnoremap <C-F> :Ag<cr>
 " Editing vimrc
 nnoremap <leader>ev :vsplit $MYVIMRC<cr> " Edit my Vimrc
 nnoremap <leader>sv :source $MYVIMRC<cr> " Source my Vimrc
+
+" Vim wiki/zettle stuff
+nnoremap <c-s> :NV<cr>
+nnoremap <c-t> :VimwikiTabnewLink<cr>
+
+" Prettier
 
 
 " ============================================================================
@@ -269,10 +285,11 @@ let g:ale_sign_column_always = 1
 
 " fixer configurations
 let g:ale_fixers = {
-\   '*': ['remove_trailing_lines', 'trim_whitespace'],
+\   'vimwiki': ['prettier'],
 \}
 
 " linter configurations
 let g:ale_linters = {
 \   'javascript': ['standard'],
+\   'vimwiki': ['markdownlint'],
 \}
