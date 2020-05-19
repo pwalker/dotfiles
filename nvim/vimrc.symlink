@@ -30,7 +30,7 @@ set listchars=tab:¦\ ,trail:⋅,extends:❯,precedes:❮ " eol:¬
 
 " Airline config
 let g:airline_theme='night_owl'
-
+let g:airline#extensions#ale#enabled = 1
 
 
 """""""""""""""""""""""""""""""""""""""""""""""
@@ -61,18 +61,25 @@ set si
 """"""""""""""""""""""""""""""""""""""""""""""
 " => Plugins List
 """"""""""""""""""""""""""""""""""""""""""""""
+if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
+  silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
 
 call plug#begin('~/.config/nvim/plugged')
 
-Plug 'scrooloose/nerdtree'
+" Plug 'scrooloose/nerdtree'
 Plug 'scrooloose/nerdcommenter'
 
 " Autocompleting
 Plug '/usr/local/opt/fzf'
 Plug 'junegunn/fzf.vim'
+" semantic-based completion
+" Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
 
 " Linting
-Plug 'w0rp/ale'
+Plug 'dense-analysis/ale'
 
 " Javascript
 Plug 'pangloss/vim-javascript'
@@ -82,15 +89,21 @@ Plug 'maxmellon/vim-jsx-pretty'
 Plug 'editorconfig/editorconfig-vim'
 
 " Git stuff
-Plug 'jreybert/vimagit'
-" Plug 'airblade/vim-gitgutter'
-Plug 'mhinz/vim-signify'
-Plug 'zivyangll/git-blame.vim'
 Plug 'tpope/vim-fugitive'
+Plug 'mhinz/vim-signify'
 
 " UI Stuff
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
+
+" Rust stuff
+Plug 'rust-lang/rust.vim'
+
+" Wiki stuff
+Plug 'vimwiki/vimwiki'
+" Plug 'michal-h21/vim-zettel'
+Plug '~/Code/vim-zettel'
+Plug 'alok/notational-fzf-vim'
 
 call plug#end()
 
@@ -103,8 +116,9 @@ call plug#end()
 " Open NERDTree automatically when vim starts up
 " autocmd vimenter * NERDTree
 " NERDTree
-let NERDTreeShowHidden=1
-map <silent> <C-n> :NERDTreeToggle<CR>
+" let NERDTreeShowHidden=1
+" map <silent> <C-n> :NERDTreeFind<CR>
+" map <silent> <C-m> :NERDTreeToggle<CR>
 
 " close NERDTree after a file is opened
 let g:NERDTreeQuitOnOpen=1
@@ -115,6 +129,25 @@ let g:signify_cursorhold_insert     = 1
 let g:signify_cursorhold_normal     = 1
 let g:signify_update_on_bufenter    = 0
 let g:signify_update_on_focusgained = 1
+
+" disable auto_triggering ycm suggestions pane and instead
+" use semantic completion only on Ctrl+n
+let ycm_trigger_key = '<C-n>'
+let g:ycm_auto_trigger = 0
+let g:ycm_key_invoke_completion = ycm_trigger_key
+
+" this is some arcane magic to allow cycling through the YCM options
+" with the same key that opened it.
+" See http://vim.wikia.com/wiki/Improve_completion_popup_menu for more info.
+let g:ycm_key_list_select_completion = ['<TAB>', '<C-j>']
+inoremap <expr> ycm_trigger_key pumvisible() ? "<C-j>" : ycm_trigger_key;
+
+" VimWiki and Zettelkasten configs
+let g:vimwiki_list = [{'path': '~/Notes/zettels', 'syntax': 'markdown', 'ext': '.md'}]
+let g:vimwiki_global_ext = 0
+let g:nv_search_paths = ['~/Notes/zettels']
+let g:zettel_format = "%y%m%d%H%M-%title"
+let g:zettel_options = [{'link_format': '[[%link]]', 'link_stub': '[[%link]]'}]
 
 
 """"""""""""""""""""""""""""""""""""""""""""
@@ -133,16 +166,6 @@ inoremap <Down>  <NOP>
 inoremap <Left>  <NOP>
 inoremap <Right> <NOP>
 
-" Open new line below and above current line
-nnoremap <leader>o o<esc>
-nnoremap <leader>O O<esc>
-
-" Save
-" inoremap <C-s>     <C-O>:update<cr>
-" nnoremap <C-s>     :update<cr>
-" nnoremap <leader>s :update<cr>
-nnoremap <leader>w :update<cr>
-
 " Movement in insert mode
 inoremap <C-h> <C-o>h
 inoremap <C-l> <C-o>a
@@ -151,11 +174,18 @@ inoremap <C-k> <C-o>k
 inoremap <C-^> <C-o><C-^>
 
 " FZF
-nnoremap <C-p> :Files<cr>
+nnoremap <Tab> :Files<cr>
 nnoremap <C-F> :Ag<cr>
 
-" Git blame
-nnoremap <Leader>s :<C-u>call gitblame#echo()<CR>
+" Editing vimrc
+nnoremap <leader>ev :vsplit $MYVIMRC<cr> " Edit my Vimrc
+nnoremap <leader>sv :source $MYVIMRC<cr> " Source my Vimrc
+
+" Vim wiki/zettle stuff
+nnoremap <c-s> :NV<cr>
+nnoremap <c-t> :VimwikiTabnewLink<cr>
+
+" Prettier
 
 
 " ============================================================================
@@ -195,7 +225,7 @@ command! -bang -nargs=* Ag
   \                         : fzf#vim#with_preview('right:50%'),
   \                 <bang>0)
 
-" nnoremap <silent> <Leader><Leader> :Files<CR>
+nnoremap <silent> <Leader><Leader> :Files<CR>
 nnoremap <silent> <expr> <Leader><Leader> (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":Files\<cr>"
 nnoremap <silent> <Leader>C        :Colors<CR>
 nnoremap <silent> <Leader><Enter>  :Buffers<CR>
@@ -249,16 +279,17 @@ let g:ale_lint_on_text_changed = 'always'
 let g:ale_lint_delay = 1000
 
 " use nice symbols for errors and warnings
-let g:ale_sign_error = '✗\ '
-let g:ale_sign_warning = '⚠\ '
+" let g:ale_sign_error = 'x'
+" let g:ale_sign_warning = 'w\ '
 let g:ale_sign_column_always = 1
 
 " fixer configurations
 let g:ale_fixers = {
-\   '*': ['remove_trailing_lines', 'trim_whitespace'],
+\   'vimwiki': ['prettier'],
 \}
 
 " linter configurations
 let g:ale_linters = {
 \   'javascript': ['standard'],
+\   'vimwiki': ['markdownlint'],
 \}
