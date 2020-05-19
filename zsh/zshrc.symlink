@@ -53,7 +53,6 @@ plugins=(
   iterm2
   yarn
   zsh_reload
-  j
 )
 
 source $ZSH/oh-my-zsh.sh
