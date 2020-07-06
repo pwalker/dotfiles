@@ -56,6 +56,8 @@ plugins=(
   zsh_reload
   fzf
   zsh-nvm
+  yarn
+  npm
 )
 
 source $ZSH/oh-my-zsh.sh

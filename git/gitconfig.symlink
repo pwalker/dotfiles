@@ -15,7 +15,7 @@
         branch = auto
         ui = true
 [core]
-        excludesfile = ~/.gitignore
+	excludesfile = /Users/vn0bor0/.gitignore
 [apply]
         whitespace = nowarn
 [mergetool]
@@ -32,3 +32,14 @@
         default = simple
 [credential]
 	helper = osxkeychain
+[user]
+	name = Peter Walker
+	email = peter.walker@walmartlabs.com
+[difftool "sourcetree"]
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	path = 
+[mergetool "sourcetree"]
+	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true
+[commit]
+	template = /Users/vn0bor0/.stCommitMsg

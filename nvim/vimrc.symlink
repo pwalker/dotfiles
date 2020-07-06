@@ -69,14 +69,14 @@ endif
 
 call plug#begin('~/.config/nvim/plugged')
 
-Plug 'scrooloose/nerdtree'
+" NERDTree
+Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 Plug 'scrooloose/nerdcommenter'
+Plug 'Xuyuanp/nerdtree-git-plugin'
 
 " Autocompleting
 Plug '/usr/local/opt/fzf'
 Plug 'junegunn/fzf.vim'
-" semantic-based completion
-" Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
 
 " Linting
 Plug 'w0rp/ale'
@@ -84,6 +84,22 @@ Plug 'w0rp/ale'
 " Javascript
 Plug 'pangloss/vim-javascript'
 Plug 'maxmellon/vim-jsx-pretty'
+
+" Typescript Syntax Highlight
+Plug 'leafgarland/typescript-vim'
+Plug 'peitalin/vim-jsx-typescript'
+
+
+" Completion
+"Plug 'HerringtonDarkholme/yats.vim'
+Plug 'mhartington/nvim-typescript', {'do': './install.sh'}
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+
+" Async execution library needed by tsuquyomi
+" Plug 'Shougo/vimproc.vim', {'do' : 'make'}
+
+" A client to TSSServer so that we can get autocompletion
+" Plug 'Quramy/tsuquyomi'
 
 " .editorconfig
 Plug 'editorconfig/editorconfig-vim'
@@ -99,9 +115,6 @@ Plug 'vim-airline/vim-airline-themes'
 " Rust stuff
 Plug 'rust-lang/rust.vim'
 
-" Wiki stuff
-Plug 'vimwiki/vimwiki'
-
 call plug#end()
 
 
@@ -114,7 +127,7 @@ call plug#end()
 " autocmd vimenter * NERDTree
 " NERDTree
 let NERDTreeShowHidden=1
-" map <silent> <C-n> :NERDTreeFind<CR>
+map <silent> <C-n> :NERDTreeFind<CR>
 map <silent> <C-m> :NERDTreeToggle<CR>
 
 " close NERDTree after a file is opened
@@ -126,18 +139,6 @@ let g:signify_cursorhold_insert     = 1
 let g:signify_cursorhold_normal     = 1
 let g:signify_update_on_bufenter    = 0
 let g:signify_update_on_focusgained = 1
-
-" disable auto_triggering ycm suggestions pane and instead
-" use semantic completion only on Ctrl+n
-let ycm_trigger_key = '<C-n>'
-let g:ycm_auto_trigger = 0
-let g:ycm_key_invoke_completion = ycm_trigger_key
-
-" this is some arcane magic to allow cycling through the YCM options
-" with the same key that opened it.
-" See http://vim.wikia.com/wiki/Improve_completion_popup_menu for more info.
-let g:ycm_key_list_select_completion = ['<TAB>', '<C-j>']
-inoremap <expr> ycm_trigger_key pumvisible() ? "<C-j>" : ycm_trigger_key;
 
 
 """"""""""""""""""""""""""""""""""""""""""""
@@ -164,12 +165,19 @@ inoremap <C-k> <C-o>k
 inoremap <C-^> <C-o><C-^>
 
 " FZF
-nnoremap <Tab> :Files<cr>
+nnoremap <C-P> :Files<cr>
 nnoremap <C-F> :Ag<cr>
 
 " Editing vimrc
 nnoremap <leader>ev :vsplit $MYVIMRC<cr> " Edit my Vimrc
 nnoremap <leader>sv :source $MYVIMRC<cr> " Source my Vimrc
+
+" Typescript
+nnoremap <F12> :TSDef<CR>
+nnoremap <C-F12> :TSDefPreview<CR>
+
+" ALE
+nnoremap <M-F> :ALEFix<CR>
 
 
 " ============================================================================
@@ -249,6 +257,10 @@ command! PlugHelp call fzf#run(fzf#wrap({
   \ 'source': sort(keys(g:plugs)),
   \ 'sink':   function('s:plug_help_sink')}))
 
+" make FZF respect gitignore if `ag` is installed
+if (executable('ag'))
+    let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -g ""'
+endif
 
 "
 " Linter stuff
@@ -262,17 +274,24 @@ let g:ale_linters_explicit = 1
 let g:ale_lint_on_text_changed = 'always'
 let g:ale_lint_delay = 1000
 
-" use nice symbols for errors and warnings
-" let g:ale_sign_error = 'x'
-" let g:ale_sign_warning = 'w\ '
-let g:ale_sign_column_always = 1
+" use emojis for errors and warnings
+let g:ale_sign_error = '✗\ '
+let g:ale_sign_warning = '⚠\ '
+
+let g:ale_echo_delay = 500
+let g:ale_echo_cursor = 1
 
 " fixer configurations
 let g:ale_fixers = {
 \   '*': ['remove_trailing_lines', 'trim_whitespace'],
+\   'typescript': ['eslint', 'prettier']
 \}
 
 " linter configurations
 let g:ale_linters = {
-\   'javascript': ['standard'],
+\   'javascript': ['eslint', 'standard'],
+\   'typescript': ['eslint']
 \}
+
+
+let g:deoplete#enable_at_startup = 1
