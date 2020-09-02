@@ -69,14 +69,12 @@ endif
 
 call plug#begin('~/.config/nvim/plugged')
 
-" Plug 'scrooloose/nerdtree'
+Plug 'scrooloose/nerdtree'
 Plug 'scrooloose/nerdcommenter'
 
 " Autocompleting
-Plug '/usr/local/opt/fzf'
+" Plug '/usr/local/opt/fzf'
 Plug 'junegunn/fzf.vim'
-" semantic-based completion
-" Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
 
 " Linting
 Plug 'dense-analysis/ale'
@@ -99,11 +97,8 @@ Plug 'vim-airline/vim-airline-themes'
 " Rust stuff
 Plug 'rust-lang/rust.vim'
 
-" Wiki stuff
-Plug 'vimwiki/vimwiki'
-" Plug 'michal-h21/vim-zettel'
-Plug '~/Code/vim-zettel'
-Plug 'alok/notational-fzf-vim'
+" Python stuff
+" Plug 'numirias/semshi', {'do': ':UpdateRemotePlugins'}
 
 call plug#end()
 
@@ -118,7 +113,7 @@ call plug#end()
 " NERDTree
 " let NERDTreeShowHidden=1
 " map <silent> <C-n> :NERDTreeFind<CR>
-" map <silent> <C-m> :NERDTreeToggle<CR>
+map <silent> <C-m> :NERDTreeToggle<CR>
 
 " close NERDTree after a file is opened
 let g:NERDTreeQuitOnOpen=1
@@ -142,17 +137,12 @@ let g:ycm_key_invoke_completion = ycm_trigger_key
 let g:ycm_key_list_select_completion = ['<TAB>', '<C-j>']
 inoremap <expr> ycm_trigger_key pumvisible() ? "<C-j>" : ycm_trigger_key;
 
-" VimWiki and Zettelkasten configs
-let g:vimwiki_list = [{'path': '~/Notes/zettels', 'syntax': 'markdown', 'ext': '.md'}]
-let g:vimwiki_global_ext = 0
-let g:nv_search_paths = ['~/Notes/zettels']
-let g:zettel_format = "%y%m%d%H%M-%title"
-let g:zettel_options = [{'link_format': '[[%link]]', 'link_stub': '[[%link]]'}]
-
 
 """"""""""""""""""""""""""""""""""""""""""""
 " => Mappings
 """"""""""""""""""""""""""""""""""""""""""""
+
+:let mapleader = " "
 
 " don't use arrowkeys
 noremap <Up> <NOP>
@@ -180,12 +170,6 @@ nnoremap <C-F> :Ag<cr>
 " Editing vimrc
 nnoremap <leader>ev :vsplit $MYVIMRC<cr> " Edit my Vimrc
 nnoremap <leader>sv :source $MYVIMRC<cr> " Source my Vimrc
-
-" Vim wiki/zettle stuff
-nnoremap <c-s> :NV<cr>
-nnoremap <c-t> :VimwikiTabnewLink<cr>
-
-" Prettier
 
 
 " ============================================================================
@@ -285,11 +269,11 @@ let g:ale_sign_column_always = 1
 
 " fixer configurations
 let g:ale_fixers = {
-\   'vimwiki': ['prettier'],
+\   'python': ['trim_whitespace', 'black'],
 \}
 
 " linter configurations
 let g:ale_linters = {
 \   'javascript': ['standard'],
-\   'vimwiki': ['markdownlint'],
+\   'python': ['flake8']
 \}
