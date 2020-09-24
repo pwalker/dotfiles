@@ -11,6 +11,13 @@ set lazyredraw              " Only redraw when necessary
 set cursorline              " Find the current line quickly.
 
 
+" For COC
+" Some servers have issues with backup files, see #649.
+set nobackup
+set nowritebackup
+set cmdheight=2
+set updatetime=300
+
 
 """"""""""""""""""""""""""""""""""""""""""""""
 " => Visual Related Configs
@@ -36,17 +43,12 @@ let g:airline#extensions#ale#enabled = 1
 """""""""""""""""""""""""""""""""""""""""""""""
 " => Indentation
 """""""""""""""""""""""""""""""""""""""""""""""
-
-" Use spaces instead of tabs
 set expandtab
-
-" Be smart when using tabs ;)
-" :help smarttab
 set smarttab
-
-" 1 tab == 2 spaces
-set shiftwidth=2
-set tabstop=2
+set shiftwidth=4
+set tabstop=4
+set autoindent
+set smartindent
 
 " Auto indent
 " Copy the indentation from the previous line when starting a new line
@@ -75,7 +77,9 @@ Plug 'scrooloose/nerdcommenter'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 
 " Autocompleting
-Plug '/usr/local/opt/fzf'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" Plug '/usr/local/opt/fzf'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
 " Linting
@@ -91,15 +95,6 @@ Plug 'peitalin/vim-jsx-typescript'
 
 
 " Completion
-"Plug 'HerringtonDarkholme/yats.vim'
-Plug 'mhartington/nvim-typescript', {'do': './install.sh'}
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-
-" Async execution library needed by tsuquyomi
-" Plug 'Shougo/vimproc.vim', {'do' : 'make'}
-
-" A client to TSSServer so that we can get autocompletion
-" Plug 'Quramy/tsuquyomi'
 
 " .editorconfig
 Plug 'editorconfig/editorconfig-vim'
@@ -114,6 +109,12 @@ Plug 'vim-airline/vim-airline-themes'
 
 " Rust stuff
 Plug 'rust-lang/rust.vim'
+
+" Smooth Scrolling
+Plug 'psliwka/vim-smoothie'
+
+" Show indent lines
+Plug 'Yggdroot/indentLine'
 
 call plug#end()
 
@@ -145,6 +146,8 @@ let g:signify_update_on_focusgained = 1
 " => Mappings
 """"""""""""""""""""""""""""""""""""""""""""
 
+:let mapleader = " "
+
 " don't use arrowkeys
 noremap <Up> <NOP>
 noremap <Down> <NOP>
@@ -166,15 +169,13 @@ inoremap <C-^> <C-o><C-^>
 
 " FZF
 nnoremap <C-P> :Files<cr>
-nnoremap <C-F> :Ag<cr>
+nnoremap <C-F> :Rg<cr>
+nnoremap <C-q> :GFiles<cr>
+nnoremap <C-o> :Buffers<cr>
 
 " Editing vimrc
 nnoremap <leader>ev :vsplit $MYVIMRC<cr> " Edit my Vimrc
 nnoremap <leader>sv :source $MYVIMRC<cr> " Source my Vimrc
-
-" Typescript
-nnoremap <F12> :TSDef<CR>
-nnoremap <C-F12> :TSDefPreview<CR>
 
 " ALE
 nnoremap <M-F> :ALEFix<CR>
@@ -209,32 +210,16 @@ let g:fzf_colors =
   \ 'header':  ['fg', 'Comment'] }
 
 command! -bang -nargs=? -complete=dir Files
-  \ call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
-
-command! -bang -nargs=* Ag
-  \ call fzf#vim#ag(<q-args>,
-  \                 <bang>0 ? fzf#vim#with_preview('up:60%')
-  \                         : fzf#vim#with_preview('right:50%'),
-  \                 <bang>0)
+    \ call fzf#vim#files(<q-args>, fzf#vim#with_preview({'options': ['--info=inline']}), <bang>0)
 
 nnoremap <silent> <Leader><Leader> :Files<CR>
 nnoremap <silent> <expr> <Leader><Leader> (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":Files\<cr>"
 nnoremap <silent> <Leader>C        :Colors<CR>
 nnoremap <silent> <Leader><Enter>  :Buffers<CR>
 nnoremap <silent> <Leader>L        :Lines<CR>
-nnoremap <silent> <Leader>ag       :Ag <C-R><C-W><CR>
-nnoremap <silent> <Leader>AG       :Ag <C-R><C-A><CR>
-xnoremap <silent> <Leader>ag       y:Ag <C-R>"<CR>
 nnoremap <silent> <Leader>`        :Marks<CR>
 " nnoremap <silent> q: :History:<CR>
 " nnoremap <silent> q/ :History/<CR>
-
-inoremap <expr> <c-x><c-t> fzf#complete('tmuxwords.rb --all-but-current --scroll 500 --min 5')
-imap <c-x><c-k> <plug>(fzf-complete-word)
-imap <c-x><c-f> <plug>(fzf-complete-path)
-inoremap <expr> <c-x><c-d> fzf#vim#complete#path('blsd')
-imap <c-x><c-j> <plug>(fzf-complete-file-ag)
-imap <c-x><c-l> <plug>(fzf-complete-line)
 
 " nmap <leader><tab> <plug>(fzf-maps-n)
 " xmap <leader><tab> <plug>(fzf-maps-x)
@@ -270,28 +255,95 @@ let g:ale_fix_on_save = 1
 
 let g:ale_linters_explicit = 1
 
-" lint after 1000ms after changes are made both on insert mode and normal mode
+" lint after 500ms after changes are made both on insert mode and normal mode
 let g:ale_lint_on_text_changed = 'always'
-let g:ale_lint_delay = 1000
+let g:ale_lint_delay = 500
 
 " use emojis for errors and warnings
 let g:ale_sign_error = '✗\ '
 let g:ale_sign_warning = '⚠\ '
 
-let g:ale_echo_delay = 500
+" let g:ale_echo_delay = 500
 let g:ale_echo_cursor = 1
 
+let g:ale_sign_column_always = 1
+highlight clear SignColumn
+
 " fixer configurations
-let g:ale_fixers = {
-\   '*': ['remove_trailing_lines', 'trim_whitespace'],
-\   'typescript': ['eslint', 'prettier']
-\}
+" let g:ale_fixers = {
+" \   '*': ['remove_trailing_lines', 'trim_whitespace'],
+" \   'javascript': ['prettier', 'eslint'],
+" \   'typescript': ['eslint', 'prettier']
+" \}
 
 " linter configurations
-let g:ale_linters = {
-\   'javascript': ['eslint', 'standard'],
-\   'typescript': ['eslint']
-\}
+" let g:ale_linters = {
+" \   'javascript': ['eslint', 'standard'],
+" \   'typescript': ['eslint']
+" \}
 
+"
+" COC Config
+"
+" This is all pretty much ripped from https://github.com/neoclide/coc.nvim
 
-let g:deoplete#enable_at_startup = 1
+let g:airline#extensions#ale#enabled = 1
+
+" Use tab for trigger completion with characters ahead and navigate.
+" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
+" other plugin before putting this into your config.
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" Use <c-space> to trigger completion.
+if has('nvim')
+  inoremap <silent><expr> <c-space> coc#refresh()
+else
+  inoremap <silent><expr> <c-@> coc#refresh()
+endif
+
+" Use `[g` and `]g` to navigate diagnostics
+" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" GoTo code navigation.
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Use K to show documentation in preview window.
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
+" Highlight the symbol and its references when holding the cursor.
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" Formatting selected code.
+xmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
+
+" Add `:Format` command to format current buffer.
+command! -nargs=0 Format :call CocAction('format')
+
+" Add `:Fold` command to fold current buffer.
+command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+
+" Add `:OR` command for organize imports of the current buffer.
+command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
