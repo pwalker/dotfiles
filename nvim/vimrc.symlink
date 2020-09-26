@@ -39,6 +39,10 @@ set listchars=tab:¦\ ,trail:⋅,extends:❯,precedes:❮ " eol:¬
 let g:airline_theme='night_owl'
 let g:airline#extensions#ale#enabled = 1
 
+" Folding
+set foldmethod=syntax
+set foldlevel=10
+
 
 """""""""""""""""""""""""""""""""""""""""""""""
 " => Indentation
@@ -93,8 +97,8 @@ Plug 'maxmellon/vim-jsx-pretty'
 Plug 'leafgarland/typescript-vim'
 Plug 'peitalin/vim-jsx-typescript'
 
-
-" Completion
+" Graphql
+Plug 'jparise/vim-graphql'
 
 " .editorconfig
 Plug 'editorconfig/editorconfig-vim'
@@ -115,6 +119,9 @@ Plug 'psliwka/vim-smoothie'
 
 " Show indent lines
 Plug 'Yggdroot/indentLine'
+
+" Multiple cursors
+Plug 'terryma/vim-multiple-cursors'
 
 call plug#end()
 
@@ -141,6 +148,9 @@ let g:signify_cursorhold_normal     = 1
 let g:signify_update_on_bufenter    = 0
 let g:signify_update_on_focusgained = 1
 
+" JSX
+let g:vim_jsx_pretty_highlight_close_tag = 1
+let g:vim_jsx_pretty_colorful_config = 1
 
 """"""""""""""""""""""""""""""""""""""""""""
 " => Mappings
@@ -175,10 +185,14 @@ nnoremap <C-o> :Buffers<cr>
 
 " Editing vimrc
 nnoremap <leader>ev :vsplit $MYVIMRC<cr> " Edit my Vimrc
+nnoremap <leader>tv :tabnew $MYVIMRC<cr> " Edit my Vimrc in a new tab
 nnoremap <leader>sv :source $MYVIMRC<cr> " Source my Vimrc
 
 " ALE
-nnoremap <M-F> :ALEFix<CR>
+" nnoremap <M-F> :ALEFix<CR>
+
+" Select-all
+nnoremap <C-a> <esc>ggVG<CR>
 
 
 " ============================================================================
@@ -251,20 +265,20 @@ endif
 " Linter stuff
 "
 " fix files on save
-let g:ale_fix_on_save = 1
+" let g:ale_fix_on_save = 1
 
-let g:ale_linters_explicit = 1
+" let g:ale_linters_explicit = 1
 
 " lint after 500ms after changes are made both on insert mode and normal mode
-let g:ale_lint_on_text_changed = 'always'
-let g:ale_lint_delay = 500
+" let g:ale_lint_on_text_changed = 'always'
+" let g:ale_lint_delay = 500
 
 " use emojis for errors and warnings
-let g:ale_sign_error = '✗\ '
-let g:ale_sign_warning = '⚠\ '
+" let g:ale_sign_error = '✗\ '
+" let g:ale_sign_warning = '⚠\ '
 
 " let g:ale_echo_delay = 500
-let g:ale_echo_cursor = 1
+" let g:ale_echo_cursor = 1
 
 let g:ale_sign_column_always = 1
 highlight clear SignColumn
@@ -316,7 +330,10 @@ nmap <silent> [g <Plug>(coc-diagnostic-prev)
 nmap <silent> ]g <Plug>(coc-diagnostic-next)
 
 " GoTo code navigation.
-nmap <silent> gd <Plug>(coc-definition)
+" https://github.com/neoclide/coc.nvim/issues/1249
+" nmap <silent> gd <Plug>(coc-definition)
+" nmap <silent> gd :call CocAction('jumpDefinition', 'tabe')<CR>
+nmap <silent> gd :call CocAction('jumpDefinition', 'vsplit')<CR>
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
@@ -335,6 +352,9 @@ endfunction
 " Highlight the symbol and its references when holding the cursor.
 autocmd CursorHold * silent call CocActionAsync('highlight')
 
+" Prettier stuff
+command! -nargs=0 Prettier :CocCommand prettier.formatFile
+
 " Formatting selected code.
 xmap <leader>f  <Plug>(coc-format-selected)
 nmap <leader>f  <Plug>(coc-format-selected)
@@ -347,3 +367,9 @@ command! -nargs=? Fold :call     CocAction('fold', <f-args>)
 
 " Add `:OR` command for organize imports of the current buffer.
 command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
+
+" Explorer
+:nmap <space>e :CocCommand explorer<CR>
+
+" Yank stuff
+nnoremap <silent> <space>y  :<C-u>CocList -A --normal yank<cr>
