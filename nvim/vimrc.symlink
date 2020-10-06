@@ -15,7 +15,7 @@ set cursorline              " Find the current line quickly.
 " Some servers have issues with backup files, see #649.
 set nobackup
 set nowritebackup
-set cmdheight=2
+set cmdheight=1
 set updatetime=300
 
 
@@ -75,6 +75,9 @@ endif
 
 call plug#begin('~/.config/nvim/plugged')
 
+" Flashy stuff
+Plug 'hardcoreplayers/dashboard-nvim'
+
 " NERDTree
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 Plug 'scrooloose/nerdcommenter'
@@ -87,7 +90,7 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
 " Linting
-Plug 'w0rp/ale'
+" Plug 'w0rp/ale'
 
 " Javascript
 Plug 'pangloss/vim-javascript'
@@ -123,6 +126,9 @@ Plug 'Yggdroot/indentLine'
 " Multiple cursors
 Plug 'terryma/vim-multiple-cursors'
 
+" Some filesystem commands and stuff
+Plug 'tpope/vim-eunuch'
+
 call plug#end()
 
 
@@ -141,6 +147,9 @@ map <silent> <C-m> :NERDTreeToggle<CR>
 " close NERDTree after a file is opened
 let g:NERDTreeQuitOnOpen=1
 
+" Commenting
+let g:NERDSpaceDelims=1
+
 " Speed up vim-signify a tad
 let g:signify_vcs_list = [ 'git' ]
 let g:signify_cursorhold_insert     = 1
@@ -149,8 +158,30 @@ let g:signify_update_on_bufenter    = 0
 let g:signify_update_on_focusgained = 1
 
 " JSX
-let g:vim_jsx_pretty_highlight_close_tag = 1
+" let g:vim_jsx_pretty_highlight_close_tag = 1
 let g:vim_jsx_pretty_colorful_config = 1
+
+" Vim Dashboard
+let g:mapleader="\<Space>"
+nmap <Leader>ss :<C-u>SessionSave<CR>
+nmap <Leader>sl :<C-u>SessionLoad<CR>
+nmap <Leader>cn :<C-u>DashboardNewFile<CR>
+nnoremap <silent> <Leader>fh :History<CR>
+nnoremap <silent> <Leader>ff :Files<CR>
+nnoremap <silent> <Leader>tc :Colors<CR>
+nnoremap <silent> <Leader>fa :Rg<CR>
+nnoremap <silent> <Leader>fb :Marks<CR>
+nnoremap <silent> <Leader>cn :<C-u>DashboardNewFile<CR>
+
+let g:dashboard_custom_shortcut={
+  \ 'last_session'       : 'SPC s l',
+  \ 'find_history'       : 'SPC f h',
+  \ 'find_file'          : 'SPC f f',
+  \ 'new_file'           : 'SPC c n',
+  \ 'change_colorscheme' : 'SPC t c',
+  \ 'find_word'          : 'SPC f a',
+  \ 'book_marks'         : 'SPC f b',
+  \ }
 
 """"""""""""""""""""""""""""""""""""""""""""
 " => Mappings
@@ -182,6 +213,9 @@ nnoremap <C-P> :Files<cr>
 nnoremap <C-F> :Rg<cr>
 nnoremap <C-q> :GFiles<cr>
 nnoremap <C-o> :Buffers<cr>
+
+" Rg current word
+nnoremap <silent> <Leader>rg :Rg <C-R><C-W><CR>
 
 " Editing vimrc
 nnoremap <leader>ev :vsplit $MYVIMRC<cr> " Edit my Vimrc
@@ -225,6 +259,8 @@ let g:fzf_colors =
 
 command! -bang -nargs=? -complete=dir Files
     \ call fzf#vim#files(<q-args>, fzf#vim#with_preview({'options': ['--info=inline']}), <bang>0)
+
+command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, {'options': '--delimiter : --nth 4..'}, <bang>0)
 
 nnoremap <silent> <Leader><Leader> :Files<CR>
 nnoremap <silent> <expr> <Leader><Leader> (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":Files\<cr>"
@@ -280,7 +316,7 @@ endif
 " let g:ale_echo_delay = 500
 " let g:ale_echo_cursor = 1
 
-let g:ale_sign_column_always = 1
+" let g:ale_sign_column_always = 1
 highlight clear SignColumn
 
 " fixer configurations
@@ -350,7 +386,7 @@ function! s:show_documentation()
 endfunction
 
 " Highlight the symbol and its references when holding the cursor.
-autocmd CursorHold * silent call CocActionAsync('highlight')
+" autocmd CursorHold * silent call CocActionAsync('highlight')
 
 " Prettier stuff
 command! -nargs=0 Prettier :CocCommand prettier.formatFile
