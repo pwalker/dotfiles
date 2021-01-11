@@ -11,5 +11,5 @@ echo "Running through all the install.sh files"
 find . -name install.sh | while read installer ; do echo ">+ ${installer}"; sh -c "${installer}" ; done
 
 # find the brew installers and run them iteratively
-echo "Running through all the brew.sh files"
-find . -name brew.sh | while read installer ; do echo ">+ ${installer}"; sh -c "${installer}" ; done
+# echo "Running through all the brew.sh files"
+# find . -name brew.sh | while read installer ; do echo ">+ ${installer}"; sh -c "${installer}" ; done
