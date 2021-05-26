@@ -9,19 +9,16 @@
         count   = !git shortlog -sn
         lol = log --graph --decorate --pretty=oneline --abbrev-commit
         lola = log --graph --decorate --pretty=oneline --abbrev-commit --all
+        wip = for-each-ref --sort='authordate:iso8601' --format=' %(color:green)%(authordate:relative)%09%(color:white)%(refname:short)' refs/heads
 [color]
         diff = auto
         status = auto
         branch = auto
         ui = true
-[core]
-	excludesfile = /Users/vn0bor0/.gitignore
 [apply]
         whitespace = nowarn
 [mergetool]
         keepBackup = false
-[difftool]
-        prompt = false
 [help]
         autocorrect = 1
 [push]
@@ -34,12 +31,32 @@
 	helper = osxkeychain
 [user]
 	name = Peter Walker
-	email = peter.walker@walmartlabs.com
+	email = pwalker@peak6.com
+[core]
+	excludesfile = /Users/pwalker/.gitignore_global
+    pager = delta
+
+[delta]
+    features = unobtrusive-line-numbers
+    plus-color = "#012800"
+    minus-color = "#340001"
+    syntax-theme = Monokai Extended
+
+[interactive]
+    diffFilter = delta --color-only
+
+[delta "unobtrusive-line-numbers"]
+    line-numbers = true
+    line-numbers-minus-style = "#444444"
+    line-numbers-zero-style = "#444444"
+    line-numbers-plus-style = "#444444"
+    line-numbers-left-format = "{nm:>4}┊"
+    line-numbers-right-format = "{np:>4}│"
+    line-numbers-left-style = blue
+    line-numbers-right-style = blue
 [difftool "sourcetree"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
 	path = 
 [mergetool "sourcetree"]
 	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
 	trustExitCode = true
-[commit]
-	template = /Users/vn0bor0/.stCommitMsg

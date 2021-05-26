@@ -1,0 +1,3 @@
+NVM_COMPLETION=true
+NVM_AUTO_USE=true
+NVM_LAZY_LOAD=true

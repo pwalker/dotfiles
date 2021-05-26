@@ -1,0 +1,3 @@
+aws codeartifact login --region us-east-1 --tool npm --domain trident --repository trident
+
+mv ~/.npmrc ~/Work/.npmrc

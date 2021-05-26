@@ -163,6 +163,7 @@ let g:signify_update_on_focusgained = 1
 " let g:vim_jsx_pretty_highlight_close_tag = 1
 let g:vim_jsx_pretty_colorful_config = 1
 
+" Helpers for Startify Config
 " returns all modified files of the current git repo
 " `2>/dev/null` makes the command fail quietly, so that when we are not
 " in a git repo, the list will be empty
@@ -212,10 +213,10 @@ inoremap <Left>  <NOP>
 inoremap <Right> <NOP>
 
 " Easy window navigation
-map <C-h> <C-w>h
-map <C-j> <C-w>j
-map <C-k> <C-w>k
-map <C-l> <C-w>l
+" map <C-h> <C-w>h
+" map <C-j> <C-w>j
+" map <C-k> <C-w>k
+" map <C-l> <C-w>l
 
 " Movement in insert mode
 inoremap <C-h> <C-o>h
@@ -240,10 +241,20 @@ nnoremap <leader>sv :source $MYVIMRC<cr> " Source my Vimrc
 
 " ALE
 " nnoremap <M-F> :ALEFix<CR>
+nmap <silent> <C-k> <Plug>(ale_previous_wrap)
+nmap <silent> <C-j> <Plug>(ale_next_wrap)
 
 " Select-all
 nnoremap <C-a> <esc>ggVG<CR>
 
+" Some COC Stuff
+nnoremap <leader>p<cr> :Format
+
+" Folding
+inoremap <F9> <C-O>za
+nnoremap <F9> za
+onoremap <F9> <C-C>za
+vnoremap <F9> zf
 
 " ============================================================================
 " FZF {{{
@@ -415,6 +426,9 @@ command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organize
 
 " Explorer
 :nmap <space>e :CocCommand explorer<CR>
+
+" Format
+command! -nargs=0 Format :call CocAction('format')
 
 " Yank stuff
 nnoremap <silent> <space>y  :<C-u>CocList -A --normal yank<cr>
