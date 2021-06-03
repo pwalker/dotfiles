@@ -38,24 +38,16 @@ set listchars=tab:¦\ ,trail:⋅,extends:❯,precedes:❮ " eol:¬
 
 " Airline config
 let g:airline_theme='night_owl'
-let g:airline#extensions#ale#enabled = 1
-let g:airline#extensions#hunks#coc_git = 1
 
 " Folding
-set foldmethod=syntax
 set foldlevel=10
+set foldmethod=expr
+set foldexpr=nvim_treesitter#foldexpr()
 
 
 """""""""""""""""""""""""""""""""""""""""""""""
 " => Indentation
 """""""""""""""""""""""""""""""""""""""""""""""
-set expandtab
-set smarttab
-set shiftwidth=4
-set tabstop=4
-set autoindent
-set smartindent
-
 " Auto indent
 " Copy the indentation from the previous line when starting a new line
 set ai
@@ -63,6 +55,20 @@ set ai
 " Smart indent
 " Automatically inserts one extra level of indentation in some cases, and works for C-like files
 set si
+
+" Try to auto detect and use the indentation of a file when opened. 
+autocmd BufRead * DetectIndent
+
+" Otherwise use file type specific indentation. E.g. tabs for Makefiles
+" and 4 spaces for Python. This is optional.
+filetype plugin indent on
+
+" Set a fallback here in case detection fails and there is no file type
+" plugin available. You can also omit this, then Vim defaults to tabs.
+set expandtab shiftwidth=4 softtabstop=4
+
+" You stay in control of your tabstop setting.
+set tabstop=4
 
 
 
@@ -79,35 +85,7 @@ endif
 call plug#begin('~/.config/nvim/plugged')
 
 " Flashy stuff
-" Plug 'hardcoreplayers/dashboard-nvim'
 Plug 'mhinz/vim-startify'
-
-" NERDTree
-Plug 'preservim/nerdtree' | Plug 'Xuyuanp/nerdtree-git-plugin' | Plug 'ryanoasis/vim-devicons'
-Plug 'scrooloose/nerdcommenter'
-
-" Autocompleting
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-" Plug '/usr/local/opt/fzf'
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
-
-" Linting
-Plug 'w0rp/ale'
-
-" Javascript
-Plug 'pangloss/vim-javascript'
-Plug 'maxmellon/vim-jsx-pretty'
-
-" Typescript Syntax Highlight
-Plug 'leafgarland/typescript-vim'
-Plug 'peitalin/vim-jsx-typescript'
-
-" Graphql
-Plug 'jparise/vim-graphql'
-
-" .editorconfig
-Plug 'editorconfig/editorconfig-vim'
 
 " Git stuff
 Plug 'tpope/vim-fugitive'
@@ -126,8 +104,16 @@ Plug 'Yggdroot/indentLine'
 " Multiple cursors
 Plug 'terryma/vim-multiple-cursors'
 
-" Some filesystem commands and stuff
-Plug 'tpope/vim-eunuch'
+" Telescope
+Plug 'nvim-lua/popup.nvim'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
+
+" Syntax highlighting
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
+
+" Indentation stuff
+Plug 'timakro/vim-yadi'
 
 call plug#end()
 
@@ -137,31 +123,12 @@ call plug#end()
 " => Plugin Related Configs
 """"""""""""""""""""""""""""""""""""""""""""
 
-" Open NERDTree automatically when vim starts up
-" autocmd vimenter * NERDTree
-" NERDTree
-let NERDTreeShowHidden=1
-nnoremap <leader>f :NERDTreeToggle<CR>
-nnoremap <silent> <leader>v :NERDTreeFind<CR>
-
-let g:NERDTreeGitStatusConcealBrackets = 1
-
-" close NERDTree after a file is opened
-let g:NERDTreeQuitOnOpen=1
-
-" Commenting
-let g:NERDSpaceDelims=1
-
 " Speed up vim-signify a tad
 let g:signify_vcs_list = [ 'git' ]
 let g:signify_cursorhold_insert     = 1
 let g:signify_cursorhold_normal     = 1
 let g:signify_update_on_bufenter    = 0
 let g:signify_update_on_focusgained = 1
-
-" JSX
-" let g:vim_jsx_pretty_highlight_close_tag = 1
-let g:vim_jsx_pretty_colorful_config = 1
 
 " Helpers for Startify Config
 " returns all modified files of the current git repo
@@ -194,6 +161,32 @@ let g:startify_lists = [
         \ { 'type': 'commands',  'header': ['   Commands']       },
         \ ]
 
+" Telescope
+" Find files using Telescope command-line sugar.
+nnoremap <leader>ff <cmd>Telescope find_files<cr>
+nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+nnoremap <leader>fb <cmd>Telescope buffers<cr>
+nnoremap <leader>fh <cmd>Telescope help_tags<cr>
+nnoremap <C-P> <cmd>Telescope git_files<cr>
+nnoremap <C-F> <cmd>Telescope live_grep<cr>
+"nnoremap <C-q> :GFiles<cr>
+"nnoremap <C-o> :Buffers<cr>
+
+
+" Treesitter
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+  highlight = {
+    enable = true,              -- false will disable the whole extension
+  },
+  indent = {
+    enable = true
+  },
+}
+EOF
+
+
 """"""""""""""""""""""""""""""""""""""""""""
 " => Mappings
 """"""""""""""""""""""""""""""""""""""""""""
@@ -225,210 +218,16 @@ inoremap <C-j> <C-o>j
 inoremap <C-k> <C-o>k
 inoremap <C-^> <C-o><C-^>
 
-" FZF
-nnoremap <C-P> :Files<cr>
-nnoremap <C-F> :Rg<cr>
-nnoremap <C-q> :GFiles<cr>
-nnoremap <C-o> :Buffers<cr>
-
-" Rg current word
-nnoremap <silent> <Leader>rg :Rg <C-R><C-W><CR>
-
 " Editing vimrc
 nnoremap <leader>ev :vsplit $MYVIMRC<cr> " Edit my Vimrc
 nnoremap <leader>tv :tabnew $MYVIMRC<cr> " Edit my Vimrc in a new tab
 nnoremap <leader>sv :source $MYVIMRC<cr> " Source my Vimrc
 
-" ALE
-" nnoremap <M-F> :ALEFix<CR>
-nmap <silent> <C-k> <Plug>(ale_previous_wrap)
-nmap <silent> <C-j> <Plug>(ale_next_wrap)
-
 " Select-all
 nnoremap <C-a> <esc>ggVG<CR>
-
-" Some COC Stuff
-nnoremap <leader>p<cr> :Format
 
 " Folding
 inoremap <F9> <C-O>za
 nnoremap <F9> za
 onoremap <F9> <C-C>za
 vnoremap <F9> zf
-
-" ============================================================================
-" FZF {{{
-" ============================================================================
-
-if has('nvim') || has('gui_running')
-  let $FZF_DEFAULT_OPTS .= ' --inline-info'
-endif
-
-" Hide statusline of terminal buffer
-autocmd! FileType fzf
-autocmd  FileType fzf set laststatus=0 noshowmode noruler
-  \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
-
-let g:fzf_colors =
-\ { 'fg':      ['fg', 'Normal'],
-  \ 'bg':      ['bg', 'Normal'],
-  \ 'hl':      ['fg', 'Comment'],
-  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
-  \ 'hl+':     ['fg', 'Statement'],
-  \ 'info':    ['fg', 'PreProc'],
-  \ 'border':  ['fg', 'Ignore'],
-  \ 'prompt':  ['fg', 'Conditional'],
-  \ 'pointer': ['fg', 'Exception'],
-  \ 'marker':  ['fg', 'Keyword'],
-  \ 'spinner': ['fg', 'Label'],
-  \ 'header':  ['fg', 'Comment'] }
-
-command! -bang -nargs=? -complete=dir Files
-    \ call fzf#vim#files(<q-args>, fzf#vim#with_preview({'options': ['--info=inline']}), <bang>0)
-
-command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, {'options': '--delimiter : --nth 4..'}, <bang>0)
-
-nnoremap <silent> <Leader><Leader> :Files<CR>
-nnoremap <silent> <expr> <Leader><Leader> (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":Files\<cr>"
-nnoremap <silent> <Leader>C        :Colors<CR>
-nnoremap <silent> <Leader><Enter>  :Buffers<CR>
-nnoremap <silent> <Leader>L        :Lines<CR>
-nnoremap <silent> <Leader>`        :Marks<CR>
-" nnoremap <silent> q: :History:<CR>
-" nnoremap <silent> q/ :History/<CR>
-
-" nmap <leader><tab> <plug>(fzf-maps-n)
-" xmap <leader><tab> <plug>(fzf-maps-x)
-" omap <leader><tab> <plug>(fzf-maps-o)
-
-function! s:plug_help_sink(line)
-  let dir = g:plugs[a:line].dir
-  for pat in ['doc/*.txt', 'README.md']
-    let match = get(split(globpath(dir, pat), "\n"), 0, '')
-    if len(match)
-      execute 'tabedit' match
-      return
-    endif
-  endfor
-  tabnew
-  execute 'Explore' dir
-endfunction
-
-command! PlugHelp call fzf#run(fzf#wrap({
-  \ 'source': sort(keys(g:plugs)),
-  \ 'sink':   function('s:plug_help_sink')}))
-
-" make FZF respect gitignore if `ag` is installed
-if (executable('ag'))
-    let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -g ""'
-endif
-
-"
-" Linter stuff
-"
-" fix files on save
-let g:ale_fix_on_save = 1
-
-let g:ale_linters_explicit = 1
-
-" lint after 500ms after changes are made both on insert mode and normal mode
-let g:ale_lint_on_text_changed = 'always'
-let g:ale_lint_delay = 500
-
-" use emojis for errors and warnings
-let g:ale_sign_error = '✗\ '
-let g:ale_sign_warning = '⚠\ '
-
-let g:ale_echo_delay = 250
-let g:ale_echo_cursor = 1
-
-let g:ale_virtualtext_cursor = 1
-let g:ale_virtualtext_cursor = 'ᐅ '
-
-let g:ale_sign_column_always = 1
-highlight clear SignColumn
-
-" fixer configurations
-let g:ale_fixers = {
- \   '*': ['remove_trailing_lines', 'trim_whitespace'],
- \   'javascript': ['prettier', 'eslint'],
- \   'typescript': ['eslint', 'prettier']
- \}
-
-" linter configurations
- let g:ale_linters = {
- \   'javascript': ['eslint', 'standard'],
- \   'typescript': ['eslint']
- \}
-
-"
-" COC Config
-"
-" This is all pretty much ripped from https://github.com/neoclide/coc.nvim
-
-" let g:airline#extensions#ale#enabled = 1
-
-" Use tab for trigger completion with characters ahead and navigate.
-" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
-" other plugin before putting this into your config.
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-
-" Use <c-space> to trigger completion.
-if has('nvim')
-  inoremap <silent><expr> <c-space> coc#refresh()
-else
-  inoremap <silent><expr> <c-@> coc#refresh()
-endif
-
-" Use `[g` and `]g` to navigate diagnostics
-" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
-nmap <silent> [g <Plug>(coc-diagnostic-prev)
-nmap <silent> ]g <Plug>(coc-diagnostic-next)
-
-" GoTo code navigation.
-" https://github.com/neoclide/coc.nvim/issues/1249
-" nmap <silent> gd <Plug>(coc-definition)
-" nmap <silent> gd :call CocAction('jumpDefinition', 'tabe')<CR>
-nmap <silent> gd :call CocAction('jumpDefinition', 'vsplit')<CR>
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-
-" Use K to show documentation in preview window.
-nnoremap <silent> K :call <SID>show_documentation()<CR>
-
-function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  else
-    call CocAction('doHover')
-  endif
-endfunction
-
-" Highlight the symbol and its references when holding the cursor.
-" autocmd CursorHold * silent call CocActionAsync('highlight')
-
-" Add `:Fold` command to fold current buffer.
-command! -nargs=? Fold :call     CocAction('fold', <f-args>)
-
-" Add `:OR` command for organize imports of the current buffer.
-command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
-
-" Explorer
-:nmap <space>e :CocCommand explorer<CR>
-
-" Format
-command! -nargs=0 Format :call CocAction('format')
-
-" Yank stuff
-nnoremap <silent> <space>y  :<C-u>CocList -A --normal yank<cr>

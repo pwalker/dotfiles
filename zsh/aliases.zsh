@@ -11,3 +11,7 @@ function jd() {
       cd $selected_file
   fi
 }
+
+
+# Some PEAK6 stuff
+alias nfs-k9s-dev-qa='k9s --kubeconfig ~/.kube/config.dev-qa-sso'
