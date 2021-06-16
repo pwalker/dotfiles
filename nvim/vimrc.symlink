@@ -89,7 +89,7 @@ Plug 'mhinz/vim-startify'
 
 " Git stuff
 Plug 'tpope/vim-fugitive'
-Plug 'mhinz/vim-signify'
+" Plug 'mhinz/vim-signify'
 
 " UI Stuff
 Plug 'vim-airline/vim-airline'
@@ -108,12 +108,22 @@ Plug 'terryma/vim-multiple-cursors'
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
+Plug 'nvim-telescope/telescope-project.nvim'
 
 " Syntax highlighting
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
 
 " Indentation stuff
 Plug 'timakro/vim-yadi'
+
+" Some Vim help
+Plug 'folke/which-key.nvim'
+
+" Javascript
+Plug 'mhartington/formatter.nvim'
+Plug 'neovim/nvim-lspconfig'
+Plug 'RishabhRD/popfix'
+Plug 'RishabhRD/nvim-lsputils'
 
 call plug#end()
 
@@ -163,14 +173,40 @@ let g:startify_lists = [
 
 " Telescope
 " Find files using Telescope command-line sugar.
-nnoremap <leader>ff <cmd>Telescope find_files<cr>
-nnoremap <leader>fg <cmd>Telescope live_grep<cr>
-nnoremap <leader>fb <cmd>Telescope buffers<cr>
-nnoremap <leader>fh <cmd>Telescope help_tags<cr>
-nnoremap <C-P> <cmd>Telescope git_files<cr>
-nnoremap <C-F> <cmd>Telescope live_grep<cr>
+"nnoremap <leader>ff <cmd>Telescope find_files<cr>
+"nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+"nnoremap <leader>fb <cmd>Telescope buffers<cr>
+"nnoremap <leader>fh <cmd>Telescope help_tags<cr>
+"nnoremap <C-O> <cmd>Telescope git_files<cr>
+"nnoremap <C-F> <cmd>Telescope live_grep<cr>
 "nnoremap <C-q> :GFiles<cr>
 "nnoremap <C-o> :Buffers<cr>
+lua <<EOF
+require'telescope'.load_extension('project')
+
+vim.api.nvim_set_keymap(
+	'n',
+	'<C-p>',
+	":lua require'telescope'.extensions.project.project{}<CR>",
+	{noremap = true, silent = true}
+)
+
+vim.api.nvim_set_keymap('n', '<leader>ff', [[<cmd>lua require('telescope.builtin').find_files()<cr>]], { noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', '<leader><space>', [[<cmd>lua require('telescope.builtin').buffers()<cr>]], { noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', '<leader>l', [[<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<cr>]], { noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', '<leader>t', [[<cmd>lua require('telescope.builtin').tags()<cr>]], { noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', '<leader>?', [[<cmd>lua require('telescope.builtin').oldfiles()<cr>]], { noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', '<leader>sd', [[<cmd>lua require('telescope.builtin').grep_string()<cr>]], { noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', '<leader>sp', [[<cmd>lua require('telescope.builtin').live_grep()<cr>]], { noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', '<leader>o', [[<cmd>lua require('telescope.builtin').tags{ only_current_buffer = true }<cr>]], { noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', '<leader>gc', [[<cmd>lua require('telescope.builtin').git_commits()<cr>]], { noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', '<leader>gf', [[<cmd>lua require('telescope.builtin').git_files()<cr>]], { noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', '<leader>gb', [[<cmd>lua require('telescope.builtin').git_branches()<cr>]], { noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', '<leader>gs', [[<cmd>lua require('telescope.builtin').git_status()<cr>]], { noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', '<leader>gp', [[<cmd>lua require('telescope.builtin').git_bcommits()<cr>]], { noremap = true, silent = true})
+
+
+EOF
 
 
 " Treesitter
@@ -184,6 +220,47 @@ require'nvim-treesitter.configs'.setup {
     enable = true
   },
 }
+EOF
+
+
+
+" Formatter
+nnoremap <silent> <leader>f :Format<CR>
+lua << EOF
+require('formatter').setup({
+  logging = false,
+  filetype = {
+    javascript = {
+        -- prettier
+       function()
+          return {
+            exe = "prettier",
+            args = {"--stdin-filepath", vim.api.nvim_buf_get_name(0)},
+            stdin = true
+          }
+        end
+    }
+  }
+})
+
+vim.api.nvim_exec([[
+augroup FormatAutogroup
+  autocmd!
+  autocmd BufWritePost *.js,*.rs,*.lua FormatWrite
+augroup END
+]], true)
+EOF
+
+" Language Server & Autocomplete
+lua <<EOF
+vim.lsp.handlers['textDocument/codeAction'] = require'lsputil.codeAction'.code_action_handler
+vim.lsp.handlers['textDocument/references'] = require'lsputil.locations'.references_handler
+vim.lsp.handlers['textDocument/definition'] = require'lsputil.locations'.definition_handler
+vim.lsp.handlers['textDocument/declaration'] = require'lsputil.locations'.declaration_handler
+vim.lsp.handlers['textDocument/typeDefinition'] = require'lsputil.locations'.typeDefinition_handler
+vim.lsp.handlers['textDocument/implementation'] = require'lsputil.locations'.implementation_handler
+vim.lsp.handlers['textDocument/documentSymbol'] = require'lsputil.symbols'.document_handler
+vim.lsp.handlers['workspace/symbol'] = require'lsputil.symbols'.workspace_handler
 EOF
 
 
