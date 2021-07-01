@@ -44,7 +44,6 @@ set foldlevel=10
 set foldmethod=expr
 set foldexpr=nvim_treesitter#foldexpr()
 
-
 """""""""""""""""""""""""""""""""""""""""""""""
 " => Indentation
 """""""""""""""""""""""""""""""""""""""""""""""
@@ -70,12 +69,9 @@ set expandtab shiftwidth=4 softtabstop=4
 " You stay in control of your tabstop setting.
 set tabstop=4
 
-
-
 """"""""""""""""""""""""""""""""""""""""""""""
 " => Plugins List
 """"""""""""""""""""""""""""""""""""""""""""""
-let g:ale_disable_lsp = 1
 if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
   silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -89,17 +85,15 @@ Plug 'mhinz/vim-startify'
 
 " Git stuff
 Plug 'tpope/vim-fugitive'
-" Plug 'mhinz/vim-signify'
+Plug 'mhinz/vim-signify'
 
 " UI Stuff
+Plug 'haishanh/night-owl.vim'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 
 " Smooth Scrolling
 Plug 'psliwka/vim-smoothie'
-
-" Show indent lines
-Plug 'Yggdroot/indentLine'
 
 " Multiple cursors
 Plug 'terryma/vim-multiple-cursors'
@@ -120,7 +114,8 @@ Plug 'timakro/vim-yadi'
 Plug 'folke/which-key.nvim'
 
 " Javascript
-Plug 'mhartington/formatter.nvim'
+Plug 'thaerkh/vim-indentguides'
+Plug 'prettier/vim-prettier'
 Plug 'neovim/nvim-lspconfig'
 Plug 'RishabhRD/popfix'
 Plug 'RishabhRD/nvim-lsputils'
@@ -132,6 +127,11 @@ call plug#end()
 """"""""""""""""""""""""""""""""""""""""""""
 " => Plugin Related Configs
 """"""""""""""""""""""""""""""""""""""""""""
+
+set updatetime=100
+
+" Enable our color scheme after its been loaded
+colorscheme night-owl
 
 " Speed up vim-signify a tad
 let g:signify_vcs_list = [ 'git' ]
@@ -173,14 +173,6 @@ let g:startify_lists = [
 
 " Telescope
 " Find files using Telescope command-line sugar.
-"nnoremap <leader>ff <cmd>Telescope find_files<cr>
-"nnoremap <leader>fg <cmd>Telescope live_grep<cr>
-"nnoremap <leader>fb <cmd>Telescope buffers<cr>
-"nnoremap <leader>fh <cmd>Telescope help_tags<cr>
-"nnoremap <C-O> <cmd>Telescope git_files<cr>
-"nnoremap <C-F> <cmd>Telescope live_grep<cr>
-"nnoremap <C-q> :GFiles<cr>
-"nnoremap <C-o> :Buffers<cr>
 lua <<EOF
 require'telescope'.load_extension('project')
 
@@ -204,8 +196,6 @@ vim.api.nvim_set_keymap('n', '<leader>gf', [[<cmd>lua require('telescope.builtin
 vim.api.nvim_set_keymap('n', '<leader>gb', [[<cmd>lua require('telescope.builtin').git_branches()<cr>]], { noremap = true, silent = true})
 vim.api.nvim_set_keymap('n', '<leader>gs', [[<cmd>lua require('telescope.builtin').git_status()<cr>]], { noremap = true, silent = true})
 vim.api.nvim_set_keymap('n', '<leader>gp', [[<cmd>lua require('telescope.builtin').git_bcommits()<cr>]], { noremap = true, silent = true})
-
-
 EOF
 
 
@@ -222,35 +212,6 @@ require'nvim-treesitter.configs'.setup {
 }
 EOF
 
-
-
-" Formatter
-nnoremap <silent> <leader>f :Format<CR>
-lua << EOF
-require('formatter').setup({
-  logging = false,
-  filetype = {
-    javascript = {
-        -- prettier
-       function()
-          return {
-            exe = "prettier",
-            args = {"--stdin-filepath", vim.api.nvim_buf_get_name(0)},
-            stdin = true
-          }
-        end
-    }
-  }
-})
-
-vim.api.nvim_exec([[
-augroup FormatAutogroup
-  autocmd!
-  autocmd BufWritePost *.js,*.rs,*.lua FormatWrite
-augroup END
-]], true)
-EOF
-
 " Language Server & Autocomplete
 lua <<EOF
 vim.lsp.handlers['textDocument/codeAction'] = require'lsputil.codeAction'.code_action_handler
@@ -263,6 +224,9 @@ vim.lsp.handlers['textDocument/documentSymbol'] = require'lsputil.symbols'.docum
 vim.lsp.handlers['workspace/symbol'] = require'lsputil.symbols'.workspace_handler
 EOF
 
+" vim-prettier
+nmap <Leader>py <Plug>(Prettier)
+let g:prettier#autoformat_config_present = 1
 
 """"""""""""""""""""""""""""""""""""""""""""
 " => Mappings
@@ -308,3 +272,5 @@ inoremap <F9> <C-O>za
 nnoremap <F9> za
 onoremap <F9> <C-C>za
 vnoremap <F9> zf
+
+
