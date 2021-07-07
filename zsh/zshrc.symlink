@@ -2,9 +2,6 @@
 export ZSH=$HOME/.dotfiles
 export DOTFILES=$HOME/.dotfiles
 
-# your project folder that we can `c [tab]` to
-export PROJECTS=~/Work
-
 # Stash your environment variables in ~/.localrc. This means they'll stay out
 # of your main dotfiles repository (which may be public, like this one), but
 # you'll have access to them in your scripts.
@@ -41,21 +38,25 @@ done
 
 unset config_files
 
-
-
-# From my old file:
-export TERM="xterm-256color"
-
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
 
+ZSH_THEME="agnoster"
+
 plugins=(
+  autojump
+  deno
   git
-  iterm2
   yarn
   zsh_reload
   fzf
   zsh-nvm
+  zsh-autosuggestions
 )
 
 source $ZSH/oh-my-zsh.sh
+
+eval "$(starship init zsh)"
+
+eval "$(direnv hook zsh)"
+
