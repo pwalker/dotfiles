@@ -24,7 +24,6 @@ fi
 # Aliases
 #
 alias dotfiles="git --git-dir=$HOME/.dotfiles.git/ --work-tree=$HOME"
-alias reload!='. ~/.zshrc'
 alias ls='exa'
 
 
@@ -48,14 +47,6 @@ alias v="nvim"
 
 
 #
-# NVM
-#
-export NVM_COMPLETION=true
-export NVM_AUTO_USE=true
-export NVM_LAZY_LOAD=true
-
-
-#
 # FZF
 #
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -66,8 +57,10 @@ if _has fzf && _has ag; then
   export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
   export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND"
   export FZF_DEFAULT_OPTS='
-  --color fg:242,bg:236,hl:65,fg+:15,bg+:239,hl+:108
-  --color info:108,prompt:109,spinner:108,pointer:168,marker:168
+    --color=fg:#a1aab8,bg:#011627,hl:#c792ea
+    --color=fg+:#d6deeb,bg+:#011627,hl+:#ff5874
+    --color=info:#959ead,prompt:#fc514e,pointer:#c792ea
+    --color=marker:#a1cd5e,spinner:#21c7a8,header:#7fdbca
   '
 fi
 
@@ -91,24 +84,31 @@ export TERM="xterm-256color"
 export ZSH=$HOME/.oh-my-zsh
 
 plugins=(
+  evalcache
   aws
   git
   iterm2
-  zsh_reload
   fzf
-  zsh-nvm
-  yarn
-  npm
+#  yarn
+#  npm
   zsh-autosuggestions
   zsh-syntax-highlighting
 )
 
 source $ZSH/oh-my-zsh.sh
 
+export PATH=${PATH}:${GOPATH}/bin
+
+source $HOME/.cargo/env
+
+# eval "$(direnv hook zsh)"
+_evalcache direnv hook zsh
+
+eval "$(fnm env --use-on-cd)"
+
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="/Users/pwalker/.sdkman"
 [[ -s "/Users/pwalker/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/pwalker/.sdkman/bin/sdkman-init.sh"
 
-export PATH=${PATH}:${GOPATH}/bin
-
 eval "$(starship init zsh)"
+
