@@ -20,12 +20,6 @@ then
   source ~/.localrc
 fi
 
-#
-# Aliases
-#
-alias dotfiles="git --git-dir=$HOME/.dotfiles.git/ --work-tree=$HOME"
-alias ls='exa'
-
 
 #
 # Completion
@@ -74,7 +68,7 @@ fi
 #
 # Vim
 #
-export MYVIMRC="~/.config/nvim/init.vim"
+# export MYVIMRC="~/.config/nvim/init.vim"
 
 
 # From my old file:
@@ -111,4 +105,12 @@ export SDKMAN_DIR="/Users/pwalker/.sdkman"
 [[ -s "/Users/pwalker/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/pwalker/.sdkman/bin/sdkman-init.sh"
 
 eval "$(starship init zsh)"
+
+
+#
+# Aliases
+#
+alias dotfiles="git --git-dir=$HOME/.dotfiles.git/ --work-tree=$HOME"
+alias ls='exa'
+
 
