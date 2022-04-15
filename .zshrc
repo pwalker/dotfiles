@@ -62,7 +62,7 @@ fi
 #
 # Autojump
 #
-[ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
+# [ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
 
 
 #
@@ -80,7 +80,7 @@ export ZSH=$HOME/.oh-my-zsh
 plugins=(
   evalcache
   aws
-  git
+#  git
   iterm2
   fzf
 #  yarn
@@ -98,7 +98,11 @@ source $HOME/.cargo/env
 # eval "$(direnv hook zsh)"
 _evalcache direnv hook zsh
 
-eval "$(fnm env --use-on-cd)"
+#eval "$(fnm env --use-on-cd)"
+_evalcache fnm env --use-on-cd
+
+#eval "$(zoxide init --cmd j zsh)"
+_evalcache zoxide init --cmd j zsh
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="/Users/pwalker/.sdkman"
