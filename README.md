@@ -15,3 +15,17 @@ Adding and removing files works like normal commands:
 dotfiles add .somerrc
 dotfiles commit -m "added .somerc"
 ```
+
+## Installing other things:
+
+### AstroVim
+
+```
+git clone https://github.com/kabinspace/AstroVim ~/.config/nvim
+```
+
+And grab my user config
+
+```
+git clone https://github.com/pwalker/astrovim_config.git ~/.config/nvim/lua/user
+```
