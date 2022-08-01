@@ -1,9 +1,3 @@
-# shortcut to this dotfiles path is $ZSH
-export DOTFILES=$HOME/.dotfiles
-
-# your project folder that we can `c [tab]` to
-export PROJECTS=~/Work
-
 #
 # Functions
 #
@@ -59,18 +53,6 @@ if _has fzf && _has ag; then
 fi
 
 
-#
-# Autojump
-#
-# [ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
-
-
-#
-# Vim
-#
-# export MYVIMRC="~/.config/nvim/init.vim"
-
-
 # From my old file:
 export TERM="xterm-256color"
 
@@ -80,11 +62,10 @@ export ZSH=$HOME/.oh-my-zsh
 plugins=(
   evalcache
   aws
-#  git
+  forgit
   iterm2
   fzf
-#  yarn
-#  npm
+  yarn
   zsh-autosuggestions
   zsh-syntax-highlighting
 )
