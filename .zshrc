@@ -5,15 +5,28 @@ _has() {
   return $( whence $1 >/dev/null )
 }
 
-
-# Stash your environment variables in ~/.localrc. This means they'll stay out
-# of your main dotfiles repository (which may be public, like this one), but
-# you'll have access to them in your scripts.
-if [[ -a ~/.localrc ]]
+if [[ -a ~/.antigen.zsh ]]
 then
-  source ~/.localrc
+  source ~/.antigen.zsh
+else
+  echo "Please download antigen with 'curl -L git.io/antigen > .antigen.zsh'"
 fi
 
+antigen bundle zsh-users/zsh-syntax-highlighting
+antigen bundle mroth/evalcache
+antigen bundle zsh-users/zsh-autosuggestions
+antigen bundle wfxr/forgit
+
+antigen use oh-my-zsh
+
+antigen bundle yarn
+antigen bundle aws
+
+antigen bundle fzf
+antigen bundle thirteen37/fzf-alias@main
+
+# Tell Antigen that you're done.
+antigen apply
 
 #
 # Completion
@@ -29,9 +42,9 @@ zstyle ':completion:*' insert-tab pending
 # Editor
 #
 export EDITOR="nvim"                  # $EDITOR opens in terminal
-alias vi="nvim"
-alias vim="nvim"
-alias v="nvim"
+alias vi="$EDITOR"
+alias vim="$EDITOR"
+alias v="$EDITOR"
 
 
 #
@@ -56,25 +69,13 @@ fi
 # From my old file:
 export TERM="xterm-256color"
 
-# Path to your oh-my-zsh installation.
-export ZSH=$HOME/.oh-my-zsh
-
-plugins=(
-  evalcache
-  aws
-  forgit
-  iterm2
-  fzf
-  yarn
-  zsh-autosuggestions
-  # zsh-syntax-highlighting
-)
-
-source $ZSH/oh-my-zsh.sh
-
 export PATH=${PATH}:${GOPATH}/bin
 
-source $HOME/.cargo/env
+if [[ -a $HOME/.cargo/env ]]
+then
+  source $HOME/.cargo/env
+fi
+
 
 # eval "$(direnv hook zsh)"
 _evalcache direnv hook zsh
@@ -85,10 +86,6 @@ _evalcache fnm env --use-on-cd
 #eval "$(zoxide init --cmd j zsh)"
 _evalcache zoxide init --cmd j zsh
 
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="/Users/pwalker/.sdkman"
-[[ -s "/Users/pwalker/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/pwalker/.sdkman/bin/sdkman-init.sh"
-
 eval "$(starship init zsh)"
 
 
@@ -97,5 +94,13 @@ eval "$(starship init zsh)"
 #
 alias dotfiles="git --git-dir=$HOME/.dotfiles.git/ --work-tree=$HOME"
 alias ls='exa'
+
+# Stash your environment variables in ~/.localrc. This means they'll stay out
+# of your main dotfiles repository (which may be public, like this one), but
+# you'll have access to them in your scripts.
+if [[ -a ~/.localrc ]]
+then
+  source ~/.localrc
+fi
 
 
