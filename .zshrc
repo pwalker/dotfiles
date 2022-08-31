@@ -5,28 +5,30 @@ _has() {
   return $( whence $1 >/dev/null )
 }
 
-if [[ -a ~/.antigen.zsh ]]
-then
-  source ~/.antigen.zsh
-else
-  echo "Please download antigen with 'curl -L git.io/antigen > .antigen.zsh'"
-fi
+# Clone antidote if necessary.
+[[ -e ${ZDOTDIR:-~}/.antidote ]] ||
+  git clone https://github.com/mattmc3/antidote.git ${ZDOTDIR:-~}/.antidote
 
-antigen bundle zsh-users/zsh-syntax-highlighting
-antigen bundle mroth/evalcache
-antigen bundle zsh-users/zsh-autosuggestions
-antigen bundle wfxr/forgit
+# Source antidote.
+source ${ZDOTDIR:-~}/.antidote/antidote.zsh
 
-antigen use oh-my-zsh
+# Initialize antidote's dynamic mode, which changes `antidote bundle`
+# from static mode.
+source <(antidote init)
 
-antigen bundle yarn
-antigen bundle aws
+antidote bundle zsh-users/zsh-completions
+antidote bundle mattmc3/zephyr path:plugins/completions
 
-antigen bundle fzf
-antigen bundle thirteen37/fzf-alias@main
+antidote bundle zsh-users/zsh-syntax-highlighting
+antidote bundle mroth/evalcache
+antidote bundle zsh-users/zsh-autosuggestions
+antidote bundle wfxr/forgit
 
-# Tell Antigen that you're done.
-antigen apply
+antidote bundle ohmyzsh/ohmyzsh path:plugins/yarn
+antidote bundle ohmyzsh/ohmyzsh path:plugins/aws/aws.plugin.zsh
+antidote bundle ohmyzsh/ohmyzsh path:plugins/fzf
+
+antidote bundle thirteen37/fzf-alias
 
 #
 # Completion
