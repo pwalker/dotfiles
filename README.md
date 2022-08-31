@@ -1,6 +1,10 @@
 # dotfiles
 
-This repo is best used as a bare checkout into your home folder.
+This repo is best used as a bare checkout into your home folder.  You can install it with:
+
+```zsh
+git clone --bare git@github.com:pwalker/dotfiles.git $HOME/.dotfiles.git
+```
 
 The following alias is in the `.zshrc` file, and is used in the place of git commands:
 
