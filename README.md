@@ -1,10 +1,16 @@
 # dotfiles
 
-This repo is best used as a bare checkout into your home folder.  You can install it with:
+This repo is best used as a bare checkout into your home folder.
+
+## Installing
+
+The best way to install this on a new machine is with a git clone.  A caveat with this approach is that it will straight-up overwrite files you've currently got.  I'd recommend making some backups before you clone.
 
 ```zsh
-git clone --bare git@github.com:pwalker/dotfiles.git $HOME/.dotfiles.git
+git clone --separate-git-dir=.dotfiles.git git@github.com:pwalker/dotfiles.git .
 ```
+
+## Using
 
 The following alias is in the `.zshrc` file, and is used in the place of git commands:
 
@@ -22,7 +28,7 @@ dotfiles commit -m "added .somerc"
 
 ## Installing other things:
 
-### AstroVim
+### AstroNvim
 
 https://astronvim.github.io/
 
