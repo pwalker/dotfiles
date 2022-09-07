@@ -26,7 +26,6 @@ antidote bundle wfxr/forgit
 
 antidote bundle ohmyzsh/ohmyzsh path:plugins/yarn
 antidote bundle ohmyzsh/ohmyzsh path:plugins/aws/aws.plugin.zsh
-antidote bundle ohmyzsh/ohmyzsh path:plugins/fzf
 
 antidote bundle thirteen37/fzf-alias
 
@@ -65,6 +64,8 @@ if _has fzf && _has ag; then
     --color=info:#959ead,prompt:#fc514e,pointer:#c792ea
     --color=marker:#a1cd5e,spinner:#21c7a8,header:#7fdbca
   '
+
+  antidote bundle ohmyzsh/ohmyzsh path:plugins/fzf
 fi
 
 
@@ -87,6 +88,8 @@ _evalcache fnm env --use-on-cd
 
 #eval "$(zoxide init --cmd j zsh)"
 _evalcache zoxide init --cmd j zsh
+
+eval "$(/opt/homebrew/bin/brew shellenv)"
 
 eval "$(starship init zsh)"
 

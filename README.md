@@ -28,6 +28,12 @@ dotfiles commit -m "added .somerc"
 
 ## Installing other things:
 
+### CLI Tools
+
+```sh
+brew install bat exa fzf git-delta neovim direnv fnm zoxide
+```
+
 ### AstroNvim
 
 https://astronvim.github.io/
@@ -41,6 +47,13 @@ And grab my user config
 
 ```
 git clone https://github.com/pwalker/astrovim_config.git ~/.config/nvim/lua/user
+```
+
+Chances are if you use this user config, you also need to install a couple of extra things:
+
+```sh
+npm install -g prettier
+brew install stylua
 ```
 
 ### Fonts & Terminal Stuff
