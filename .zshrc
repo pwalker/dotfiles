@@ -5,6 +5,8 @@ _has() {
   return $( whence $1 >/dev/null )
 }
 
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
 # Clone antidote if necessary.
 [[ -e ${ZDOTDIR:-~}/.antidote ]] ||
   git clone https://github.com/mattmc3/antidote.git ${ZDOTDIR:-~}/.antidote
@@ -89,7 +91,8 @@ _evalcache fnm env --use-on-cd
 #eval "$(zoxide init --cmd j zsh)"
 _evalcache zoxide init --cmd j zsh
 
-eval "$(/opt/homebrew/bin/brew shellenv)"
+_evalcache atuin init zsh
+
 
 eval "$(starship init zsh)"
 
@@ -107,5 +110,4 @@ if [[ -a ~/.localrc ]]
 then
   source ~/.localrc
 fi
-
 

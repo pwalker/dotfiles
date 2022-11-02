@@ -4,7 +4,7 @@ This repo is best used as a bare checkout into your home folder.
 
 ## Installing
 
-The best way to install this on a new machine is with a git clone.  A caveat with this approach is that it will straight-up overwrite files you've currently got.  I'd recommend making some backups before you clone.
+The best way to install this on a new machine is with a git clone. A caveat with this approach is that it will straight-up overwrite files you've currently got. I'd recommend making some backups before you clone.
 
 ```zsh
 git clone --separate-git-dir=.dotfiles.git git@github.com:pwalker/dotfiles.git .
@@ -31,7 +31,7 @@ dotfiles commit -m "added .somerc"
 ### CLI Tools
 
 ```sh
-brew install bat exa fzf git-delta neovim direnv fnm zoxide
+brew install bat exa fzf the_silver_searcher ripgrep git-delta neovim direnv fnm zoxide
 ```
 
 ### AstroNvim
@@ -53,7 +53,7 @@ Chances are if you use this user config, you also need to install a couple of ex
 
 ```sh
 npm install -g prettier
-brew install stylua
+brew install stylua ripgrep
 ```
 
 ### Fonts & Terminal Stuff
