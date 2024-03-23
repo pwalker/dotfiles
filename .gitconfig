@@ -22,29 +22,8 @@
         #
         # Setting to git 2.0 default to suppress warning message
         default = simple
+	autoSetupRemote = true
 
-[core]
-        pager = delta
-
-[delta]
-        features = unobtrusive-line-numbers
-        light = false
-
-[interactive]
-        diffFilter = delta --color-only
-
-[diff]
-        colorMoved = default
-
-# [delta "unobtrusive-line-numbers"]
-#     line-numbers = true
-#     line-numbers-minus-style = "#444444"
-#     line-numbers-zero-style = "#444444"
-#     line-numbers-plus-style = "#444444"
-#     line-numbers-left-format = "{nm:>4}┊"
-#     line-numbers-right-format = "{np:>4}│"
-#     line-numbers-left-style = blue
-#     line-numbers-right-style = blue
 
 [filter "lfs"]
 	clean = git-lfs clean -- %f
@@ -52,3 +31,20 @@
 	process = git-lfs filter-process
 	required = true
 
+[user]
+	email = pwalker@nutshelllabs.io
+	name = Peter Walker
+[init]
+	defaultBranch = main
+
+[diff]
+        tool = difftastic
+
+[difftool]
+        prompt = false
+
+[difftool "difftastic"]
+        cmd = difft "$LOCAL" "$REMOTE"
+
+[pager]
+        difftool = true

@@ -5,7 +5,7 @@ _has() {
   return $( whence $1 >/dev/null )
 }
 
-eval "$(/opt/homebrew/bin/brew shellenv)"
+[ -f /opt/homebrew/bin/brew ] && eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # Clone antidote if necessary.
 [[ -e ${ZDOTDIR:-~}/.antidote ]] ||
@@ -19,7 +19,7 @@ source ${ZDOTDIR:-~}/.antidote/antidote.zsh
 source <(antidote init)
 
 antidote bundle zsh-users/zsh-completions
-antidote bundle mattmc3/zephyr path:plugins/completions
+antidote bundle mattmc3/zephyr path:plugins/completion
 
 antidote bundle zsh-users/zsh-syntax-highlighting
 antidote bundle mroth/evalcache
@@ -28,6 +28,10 @@ antidote bundle wfxr/forgit
 
 antidote bundle ohmyzsh/ohmyzsh path:plugins/yarn
 antidote bundle ohmyzsh/ohmyzsh path:plugins/aws/aws.plugin.zsh
+antidote bundle ohmyzsh/ohmyzsh path:plugins/gcloud/gcloud.plugin.zsh
+antidote bundle ohmyzsh/ohmyzsh path:plugins/bazel/_bazel
+
+antidote bundle g-plane/pnpm-shell-completion
 
 antidote bundle thirteen37/fzf-alias
 
@@ -85,23 +89,25 @@ fi
 # eval "$(direnv hook zsh)"
 _evalcache direnv hook zsh
 
-#eval "$(fnm env --use-on-cd)"
-_evalcache fnm env --use-on-cd
-
 #eval "$(zoxide init --cmd j zsh)"
-_evalcache zoxide init --cmd j zsh
+#_evalcache zoxide init --cmd j zsh
+_evalcache zoxide init zsh
+alias j="z"
 
 _evalcache atuin init zsh
 
-
 eval "$(starship init zsh)"
-
 
 #
 # Aliases
 #
 alias dotfiles="git --git-dir=$HOME/.dotfiles.git/ --work-tree=$HOME"
 alias ls='exa'
+
+#
+# ZSH Options
+#
+setopt INTERACTIVE_COMMENTS
 
 # Stash your environment variables in ~/.localrc. This means they'll stay out
 # of your main dotfiles repository (which may be public, like this one), but
@@ -110,4 +116,34 @@ if [[ -a ~/.localrc ]]
 then
   source ~/.localrc
 fi
+
+# eval "$(fnm env --use-on-cd)"
+export PATH="/home/pwalker/.local/share/fnm:$PATH"
+# eval "`fnm env`"
+_evalcache fnm env --use-on-cd
+
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+# pnpm
+export PNPM_HOME="/home/pwalker/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+
+# tabtab source for packages
+# uninstall by removing these lines
+[[ -f ~/.config/tabtab/zsh/__tabtab.zsh ]] && . ~/.config/tabtab/zsh/__tabtab.zsh || true
+
+source "$HOME/.asdf/asdf.sh"
+
+# append completions to fpath
+fpath=(${ASDF_DIR}/completions $fpath)
+
+# initialise completions with ZSH's compinit
+autoload -Uz compinit && compinit
 
