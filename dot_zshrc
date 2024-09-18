@@ -1,0 +1,149 @@
+#
+# Functions
+#
+_has() {
+  return $( whence $1 >/dev/null )
+}
+
+[ -f /opt/homebrew/bin/brew ] && eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# Clone antidote if necessary.
+[[ -e ${ZDOTDIR:-~}/.antidote ]] ||
+  git clone https://github.com/mattmc3/antidote.git ${ZDOTDIR:-~}/.antidote
+
+# Source antidote.
+source ${ZDOTDIR:-~}/.antidote/antidote.zsh
+
+# Initialize antidote's dynamic mode, which changes `antidote bundle`
+# from static mode.
+source <(antidote init)
+
+antidote bundle zsh-users/zsh-completions
+antidote bundle mattmc3/zephyr path:plugins/completion
+
+antidote bundle zsh-users/zsh-syntax-highlighting
+antidote bundle mroth/evalcache
+antidote bundle zsh-users/zsh-autosuggestions
+antidote bundle wfxr/forgit
+
+antidote bundle ohmyzsh/ohmyzsh path:plugins/yarn
+antidote bundle ohmyzsh/ohmyzsh path:plugins/aws/aws.plugin.zsh
+antidote bundle ohmyzsh/ohmyzsh path:plugins/gcloud/gcloud.plugin.zsh
+antidote bundle ohmyzsh/ohmyzsh path:plugins/bazel/_bazel
+
+antidote bundle g-plane/pnpm-shell-completion
+
+antidote bundle thirteen37/fzf-alias
+
+#
+# Completion
+#
+# matches case insensitive for lowercase
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+
+# pasting with tabs doesn't perform completion
+zstyle ':completion:*' insert-tab pending
+
+
+#
+# Editor
+#
+export EDITOR="nvim"                  # $EDITOR opens in terminal
+alias vi="$EDITOR"
+alias vim="$EDITOR"
+alias v="$EDITOR"
+
+
+#
+# FZF
+#
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# fzf + ag configuration
+if _has fzf && _has rg; then
+  export FZF_DEFAULT_COMMAND='rg --files --hidden --ignore-vcs'
+  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+  export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND"
+  export FZF_DEFAULT_OPTS='
+    --color=fg:#a1aab8,bg:#011627,hl:#c792ea
+    --color=fg+:#d6deeb,bg+:#011627,hl+:#ff5874
+    --color=info:#959ead,prompt:#fc514e,pointer:#c792ea
+    --color=marker:#a1cd5e,spinner:#21c7a8,header:#7fdbca
+  '
+
+  antidote bundle ohmyzsh/ohmyzsh path:plugins/fzf
+fi
+
+
+# From my old file:
+export TERM="xterm-256color"
+
+export PATH=${PATH}:${GOPATH}/bin
+
+if [[ -a $HOME/.cargo/env ]]
+then
+  source $HOME/.cargo/env
+fi
+
+
+# eval "$(direnv hook zsh)"
+_evalcache direnv hook zsh
+
+#eval "$(zoxide init --cmd j zsh)"
+#_evalcache zoxide init --cmd j zsh
+_evalcache zoxide init zsh
+alias j="z"
+
+_evalcache atuin init zsh
+
+eval "$(starship init zsh)"
+
+#
+# Aliases
+#
+alias dotfiles="git --git-dir=$HOME/.dotfiles.git/ --work-tree=$HOME"
+alias ls='exa'
+
+#
+# ZSH Options
+#
+setopt INTERACTIVE_COMMENTS
+
+# Stash your environment variables in ~/.localrc. This means they'll stay out
+# of your main dotfiles repository (which may be public, like this one), but
+# you'll have access to them in your scripts.
+if [[ -a ~/.localrc ]]
+then
+  source ~/.localrc
+fi
+
+# eval "$(fnm env --use-on-cd)"
+export PATH="/home/pwalker/.local/share/fnm:$PATH"
+# eval "`fnm env`"
+_evalcache fnm env --use-on-cd
+
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+# pnpm
+export PNPM_HOME="/home/pwalker/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+
+# tabtab source for packages
+# uninstall by removing these lines
+[[ -f ~/.config/tabtab/zsh/__tabtab.zsh ]] && . ~/.config/tabtab/zsh/__tabtab.zsh || true
+
+source "$HOME/.asdf/asdf.sh"
+
+# append completions to fpath
+fpath=(${ASDF_DIR}/completions $fpath)
+
+# initialise completions with ZSH's compinit
+autoload -Uz compinit && compinit
+
