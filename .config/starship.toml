@@ -1,7 +1,0 @@
-command_timeout = 750
-
-[git_branch]
-symbol = "🌱 "
-
-[aws]
-disabled = true
